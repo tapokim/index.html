@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>사색의 기록 - 독서 커뮤니티</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .serif { font-family: 'Noto Serif KR', serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <main id="app" class="pb-20">
+        <section id="home" class="tab-content active">
+            <header class="p-6 bg-white border-b">
+                <h1 class="text-2xl font-bold serif">사색의 기록</h1>
+            </header>
+            <div class="p-4">
+                <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-lg mb-6">
+                    <span class="text-xs opacity-70">이번 달의 도서</span>
+                    <h2 class="text-xl font-bold mt-1">죽음의 수용소에서</h2>
+                    <p class="text-sm opacity-80 mt-2">빅터 프랭클 저</p>
+                    <div class="mt-4 bg-white/20 h-1 rounded-full overflow-hidden">
+                        <div class="bg-white h-full" style="width: 65%"></div>
+                    </div>
+                </div>
+                <h3 class="font-bold mb-4">최근 나의 문장</h3>
+                <div id="recent-quote" class="bg-white p-4 rounded-xl border mb-4 italic text-gray-500">
+                    아직 기록된 문장이 없습니다.
+                </div>
+            </div>
+        </section>
+
+        <section id="sentences" class="tab-content">
+            <header class="p-6 bg-white border-b flex justify-between items-center">
+                <h1 class="text-2xl font-bold serif">기록된 문장들</h1>
+                <button onclick="openModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+ 추가</button>
+            </header>
+            <div id="quote-list" class="p-4 space-y-4">
+                </div>
+        </section>
+
+        <section id="memo" class="tab-content">
+            <header class="p-6 bg-white border-b">
+                <h1 class="text-2xl font-bold serif">독서 메모</h1>
+            </header>
+            <div class="p-4">
+                <textarea id="memo-input" class="w-full h-64 p-4 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="오늘 읽은 내용을 자유롭게 기록하세요..."></textarea>
+            </div>
+        </section>
+
+        <section id="debate" class="tab-content">
+            <header class="p-6 bg-white border-b">
+                <h1 class="text-2xl font-bold serif">사색의 광장</h1>
+            </header>
+            <div class="p-4 text-center text-gray-400 mt-20">준비 중인 기능입니다.</div>
+        </section>
+    </main>
+
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6">
+            <h2 class="text-xl font-bold mb-4 serif">새 문장 기록</h2>
+            <textarea id="new-quote" class="w-full h-32 p-3 border rounded-xl mb-4 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="인상 깊은 문장을 적어주세요"></textarea>
+            <div class="flex space-x-2">
+                <button onclick="closeModal()" class="flex-1 py-3 bg-gray-100 rounded-xl font-bold">취소</button>
+                <button onclick="saveQuote()" class="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-bold">저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3 pb-6">
+        <button onclick="switchTab('home')" class="nav-btn flex flex-col items-center text-indigo-600">
+            <span class="text-xl">🏠</span><span class="text-[10px] mt-1">서재</span>
+        </button>
+        <button onclick="switchTab('sentences')" class="nav-btn flex flex-col items-center text-gray-400">
+            <span class="text-xl">🔖</span><span class="text-[10px] mt-1">문장</span>
+        </button>
+        <button onclick="switchTab('memo')" class="nav-btn flex flex-col items-center text-gray-400">
+            <span class="text-xl">📝</span><span class="text-[10px] mt-1">메모</span>
+        </button>
+        <button onclick="switchTab('debate')" class="nav-btn flex flex-col items-center text-gray-400">
+            <span class="text-xl">💬</span><span class="text-[10px] mt-1">토론</span>
+        </button>
+    </nav>
+
+    <script>
+        // 1. 탭 전환 기능
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-600');
+                btn.classList.add('text-gray-400');
+            });
+            event.currentTarget.classList.add('text-indigo-600');
+            event.currentTarget.classList.remove('text-gray-400');
+        }
+
+        // 2. 모달 제어
+        function openModal() { document.getElementById('modal').classList.replace('hidden', 'flex'); }
+        function closeModal() { document.getElementById('modal').classList.replace('flex', 'hidden'); }
+
+        // 3. 문장 저장 및 불러오기 기능
+        let quotes = JSON.parse(localStorage.getItem('myQuotes') || '[]');
+
+        function renderQuotes() {
+            const list = document.getElementById('quote-list');
+            const recent = document.getElementById('recent-quote');
+            list.innerHTML = '';
+            
+            if(quotes.length > 0) {
+                recent.innerText = `"${quotes[quotes.length-1]}"`;
+                recent.classList.remove('text-gray-400');
+            }
+
+            quotes.slice().reverse().forEach(q => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-5 rounded-2xl shadow-sm border animate-fadeIn";
+                div.innerHTML = `<p class="text-lg serif leading-relaxed">"${q}"</p>`;
+                list.appendChild(div);
+            });
+        }
+
+        function saveQuote() {
+            const text = document.getElementById('new-quote').value;
+            if(!text) return alert('문장을 입력해주세요!');
+            
+            quotes.push(text);
+            localStorage.setItem('myQuotes', JSON.stringify(quotes));
+            
+            document.getElementById('new-quote').value = '';
+            closeModal();
+            renderQuotes();
+        }
+
+        // 4. 메모장 자동저장 기능
+        const memoInput = document.getElementById('memo-input');
+        memoInput.value = localStorage.getItem('myMemo') || '';
+        memoInput.addEventListener('input', (e) => {
+            localStorage.setItem('myMemo', e.target.value);
+        });
+
+        // 초기 실행
+        renderQuotes();
+    </script>
+</body>
+</html>
